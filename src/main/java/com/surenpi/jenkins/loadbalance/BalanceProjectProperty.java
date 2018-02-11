@@ -1,4 +1,4 @@
-package com.surenpi.jenkins.loadblance;
+package com.surenpi.jenkins.loadbalance;
 
 import hudson.Extension;
 import hudson.model.Job;
@@ -7,30 +7,27 @@ import hudson.model.JobPropertyDescriptor;
 import jenkins.model.ParameterizedJobMixIn;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import javax.annotation.Nonnull;
 import java.util.logging.Logger;
 
-public final class BlanceProjectProperty extends JobProperty<Job<?, ?>>
+/**
+ * @author suren
+ */
+public final class BalanceProjectProperty extends JobProperty<Job<?, ?>>
 {
-    private String blance;
+    private long memory;
+    private long disk;
 
     @DataBoundConstructor
-    public BlanceProjectProperty(String blance)
-    {
-        this.blance = blance;
-    }
-
-    public String getBlance()
-    {
-        return blance;
-    }
+    public BalanceProjectProperty() {}
 
     @Extension
     public static final class DescriptorImpl extends JobPropertyDescriptor
     {
-        public static final String NAME = "loadblance";
+        public static final String AGENT_LOAD = "agent_load";
 
         public boolean isApplicable(Class<? extends Job> jobType) {
             return ParameterizedJobMixIn.ParameterizedJob.class.isAssignableFrom(jobType);
@@ -40,14 +37,14 @@ public final class BlanceProjectProperty extends JobProperty<Job<?, ?>>
         @Override
         public String getDisplayName()
         {
-            return "blance";
+            return "Agent Load";
         }
 
         @Override
         public JobProperty<?> newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-            BlanceProjectProperty tpp = req.bindJSON(
-                    BlanceProjectProperty.class,
-                    formData.getJSONObject(NAME)
+            BalanceProjectProperty tpp = req.bindJSON(
+                    BalanceProjectProperty.class,
+                    formData.getJSONObject(AGENT_LOAD)
             );
 
             if (tpp == null) {
@@ -55,14 +52,31 @@ public final class BlanceProjectProperty extends JobProperty<Job<?, ?>>
                 return null;
             }
 
-            if (tpp.blance == null) {
-                LOGGER.fine("projectUrl not found, nullifying GithubProjectProperty");
-                return null;
-            }
-
             return tpp;
         }
     }
 
-    private static final Logger LOGGER = Logger.getLogger(BlanceProjectProperty.class.getName());
+    public long getMemory()
+    {
+        return memory;
+    }
+
+    @DataBoundSetter
+    public void setMemory(long memory)
+    {
+        this.memory = memory;
+    }
+
+    public long getDisk()
+    {
+        return disk;
+    }
+
+    @DataBoundSetter
+    public void setDisk(long disk)
+    {
+        this.disk = disk;
+    }
+
+    private static final Logger LOGGER = Logger.getLogger(BalanceProjectProperty.class.getName());
 }
