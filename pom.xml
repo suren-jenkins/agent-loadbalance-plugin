@@ -8,7 +8,7 @@
         <relativePath />
     </parent>
 
-    <groupId>io.jenkins.plugins</groupId>
+    <groupId>com.surenpi.jenkins</groupId>
     <artifactId>agent-loadbalance</artifactId>
     <version>1.0-SNAPSHOT</version>
 
